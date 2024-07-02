@@ -8,7 +8,7 @@ use cpal::StreamConfig;
 const SAMPLE_RATE: u32 = 48000;
 const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
-const PI: f32 = std::f32::consts::PI;
+const TAU: f32 = 2.0 * std::f32::consts::PI;
 
 fn next_sine_sample(i: u32) -> f32 {
     0.0
@@ -31,7 +31,10 @@ fn main() {
     let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for i in 0..BUFFER_SIZE {
             data[i as usize] = phase.sin();
-            phase += 2.0 * PI * FREQUENCY as f32 / SAMPLE_RATE as f32;
+            phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
+            if phase > TAU {
+                phase -= TAU;
+            }
         }
     };
     let stream = device

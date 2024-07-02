@@ -1,7 +1,6 @@
 #![allow(dead_code, unused_variables)]
 
 use std::sync::mpsc;
-use std::sync::mpsc::{Receiver, Sender};
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
@@ -10,6 +9,10 @@ const SAMPLE_RATE: u32 = 48000;
 const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
 const PI: f32 = std::f32::consts::PI;
+
+fn next_sine_sample(i: u32) -> f32 {
+    0.0
+}
 
 fn main() {
     let host: cpal::Host = cpal::default_host();
@@ -41,7 +44,7 @@ fn main() {
 
     stream.play().unwrap();
 
-    let (exit_tx, exit_rx): (Sender<()>, Receiver<()>) = mpsc::channel();
+    let (exit_tx, exit_rx): (mpsc::Sender<()>, mpsc::Receiver<()>) = mpsc::channel();
 
     exit_rx.recv().unwrap();
 }

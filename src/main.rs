@@ -1,5 +1,8 @@
 #![allow(dead_code, unused_variables)]
 
+use std::sync::mpsc;
+use std::sync::mpsc::{Receiver, Sender};
+
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 
@@ -24,7 +27,7 @@ fn main() {
 
     let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for i in 0..BUFFER_SIZE {
-            data[i as usize] = 2.0 * PI * phase_increment * i as f32;
+            data[i as usize] = f32::sin(2.0 * PI * phase_increment * i as f32);
         }
     };
     let stream = device
@@ -38,7 +41,7 @@ fn main() {
 
     stream.play().unwrap();
 
-    loop {
-        std::thread::sleep(std::time::Duration::from_secs(1));
-    }
+    let (exit_tx, exit_rx): (Sender<()>, Receiver<()>) = mpsc::channel();
+
+    exit_rx.recv().unwrap();
 }

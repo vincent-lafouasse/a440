@@ -10,8 +10,13 @@ const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
 const TAU: f32 = 2.0 * std::f32::consts::PI;
 
-fn next_sine_sample(i: u32) -> f32 {
-    0.0
+fn next_sine_sample(phase: &mut f32) -> f32 {
+    let output = phase.sin();
+    *phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
+    if *phase > TAU {
+        *phase -= TAU;
+    }
+    output
 }
 
 fn main() {
@@ -30,11 +35,7 @@ fn main() {
 
     let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for i in 0..BUFFER_SIZE {
-            data[i as usize] = phase.sin();
-            phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
-            if phase > TAU {
-                phase -= TAU;
-            }
+            data[i as usize] = next_sine_sample(&mut phase);
         }
     };
     let stream = device

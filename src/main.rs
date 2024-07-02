@@ -26,11 +26,12 @@ fn main() {
         buffer_size: cpal::BufferSize::Fixed(BUFFER_SIZE),
     };
 
-    let phase_increment: f32 = FREQUENCY / SAMPLE_RATE as f32;
+    let mut phase: f32 = 0.0;
 
     let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for i in 0..BUFFER_SIZE {
-            data[i as usize] = f32::sin(2.0 * PI * phase_increment * i as f32);
+            data[i as usize] = phase.sin();
+            phase += 2.0 * PI * FREQUENCY as f32 / SAMPLE_RATE as f32;
         }
     };
     let stream = device

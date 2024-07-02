@@ -1,11 +1,12 @@
 #![allow(dead_code, unused_variables)]
 
-use cpal::traits::{DeviceTrait, HostTrait};
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 
 const SAMPLE_RATE: u32 = 48000;
 const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
+const PI: f32 = std::f32::consts::PI;
 
 fn main() {
     let host: cpal::Host = cpal::default_host();
@@ -23,13 +24,21 @@ fn main() {
 
     let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for i in 0..BUFFER_SIZE {
-            data[i as usize] = 0.0;
+            data[i as usize] = 2.0 * PI * phase_increment * i as f32;
         }
     };
-    let output_stream = device.build_output_stream(
-        &config,
-        output_callback,
-        |e| eprintln!("An error has occured on the audio thread: {e}"),
-        None,
-    );
+    let stream = device
+        .build_output_stream(
+            &config,
+            output_callback,
+            |e| eprintln!("An error has occured on the audio thread: {e}"),
+            None,
+        )
+        .expect("failed to create output stream");
+
+    stream.play().unwrap();
+
+    loop {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
 }

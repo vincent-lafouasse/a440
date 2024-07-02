@@ -33,15 +33,15 @@ fn main() {
 
     let mut phase: f32 = 0.0;
 
-    let output_callback = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-        for i in 0..BUFFER_SIZE {
-            data[i as usize] = next_sine_sample(&mut phase);
+    let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+        for sample in data.iter_mut() {
+            *sample = next_sine_sample(&mut phase);
         }
     };
     let stream = device
         .build_output_stream(
             &config,
-            output_callback,
+            audio_fn,
             |e| eprintln!("An error has occured on the audio thread: {e}"),
             None,
         )

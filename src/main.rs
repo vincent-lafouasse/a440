@@ -1,5 +1,4 @@
 use std::f32::consts::TAU;
-
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 

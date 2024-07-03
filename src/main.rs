@@ -1,7 +1,5 @@
 #![allow(dead_code, unused_variables)]
 
-use std::sync::mpsc;
-
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 
@@ -45,7 +43,5 @@ fn main() {
 
     stream.play().unwrap();
 
-    let (exit_tx, exit_rx): (mpsc::Sender<()>, mpsc::Receiver<()>) = mpsc::channel();
-
-    exit_rx.recv().unwrap();
+    loop {}
 }

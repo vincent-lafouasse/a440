@@ -1,5 +1,3 @@
-#![allow(dead_code, unused_variables)]
-
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 

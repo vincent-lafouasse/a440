@@ -41,5 +41,7 @@ fn main() {
 
     stream.play().unwrap();
 
-    loop {}
+    loop {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
 }

@@ -4,7 +4,6 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 
 const SAMPLE_RATE: u32 = 48000;
-const BUFFER_SIZE: u32 = 512;
 
 const FREQUENCY: f32 = 440.0;
 const VOLUME: f32 = 0.7;
@@ -18,7 +17,7 @@ fn main() {
     let config = StreamConfig {
         channels: 1,
         sample_rate: cpal::SampleRate(SAMPLE_RATE),
-        buffer_size: cpal::BufferSize::Fixed(BUFFER_SIZE),
+        buffer_size: cpal::BufferSize::Default,
     };
 
     let mut phase: f32 = 0.0;

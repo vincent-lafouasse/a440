@@ -32,12 +32,16 @@ fn main() {
     };
 
     let mut phase: f32 = 0.0;
-
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
-            *sample = next_sine_sample(&mut phase);
+            *sample = phase.sin();
+            phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
+            if phase > TAU {
+                phase -= TAU;
+            }
         }
     };
+
     let stream = device
         .build_output_stream(
             &config,

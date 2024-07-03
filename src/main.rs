@@ -23,10 +23,7 @@ fn main() {
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
             *sample = VOLUME * phase.sin();
-            phase += TAU * FREQUENCY / SAMPLE_RATE as f32;
-            if phase > TAU {
-                phase -= TAU;
-            }
+            phase = add_mod_2pi(phase, TAU * FREQUENCY / SAMPLE_RATE as f32);
         }
     };
 
@@ -44,4 +41,8 @@ fn main() {
     loop {
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
+}
+
+fn add_mod_2pi(lhs: f32, rhs: f32) -> f32 {
+    (rhs + lhs).rem_euclid(TAU)
 }

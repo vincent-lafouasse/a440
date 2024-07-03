@@ -9,15 +9,7 @@ const SAMPLE_RATE: u32 = 48000;
 const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
 const TAU: f32 = 2.0 * std::f32::consts::PI;
-
-fn next_sine_sample(phase: &mut f32) -> f32 {
-    let output = phase.sin();
-    *phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
-    if *phase > TAU {
-        *phase -= TAU;
-    }
-    output
-}
+const VOLUME: f32 = 0.7;
 
 fn main() {
     let host: cpal::Host = cpal::default_host();
@@ -34,8 +26,8 @@ fn main() {
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
-            *sample = phase.sin();
-            phase += TAU * FREQUENCY as f32 / SAMPLE_RATE as f32;
+            *sample = VOLUME * phase.sin();
+            phase += TAU * FREQUENCY / SAMPLE_RATE as f32;
             if phase > TAU {
                 phase -= TAU;
             }

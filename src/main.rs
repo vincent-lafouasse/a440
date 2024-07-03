@@ -1,10 +1,12 @@
+use std::f32::consts::TAU;
+
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
 
 const SAMPLE_RATE: u32 = 48000;
-const FREQUENCY: f32 = 440.0;
 const BUFFER_SIZE: u32 = 512;
-const TAU: f32 = 2.0 * std::f32::consts::PI;
+
+const FREQUENCY: f32 = 440.0;
 const VOLUME: f32 = 0.7;
 
 fn main() {

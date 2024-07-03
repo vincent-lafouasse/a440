@@ -1,6 +1,6 @@
-use std::f32::consts::TAU;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
+use std::f32::consts::TAU;
 
 const SAMPLE_RATE: u32 = 48000;
 
@@ -23,7 +23,8 @@ fn main() {
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
             *sample = VOLUME * phase.sin();
-            phase = (phase + TAU * FREQUENCY / SAMPLE_RATE as f32).rem_euclid(TAU);
+            phase = phase + TAU * FREQUENCY / SAMPLE_RATE as f32;
+            phase = phase.rem_euclid(TAU);
         }
     };
 

@@ -28,7 +28,7 @@ fn main() {
         }
     };
 
-    let stream = device
+    let stream: cpal::Stream = device
         .build_output_stream(
             &config,
             audio_fn,

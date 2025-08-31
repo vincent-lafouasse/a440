@@ -1,7 +1,7 @@
 use clap::Parser;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::StreamConfig;
-use std::f32::consts::TAU;
+use std::f32::consts;
 
 const SAMPLE_RATE: u32 = 48000;
 const VOLUME: f32 = 0.7;
@@ -44,8 +44,8 @@ fn main() {
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
             *sample = VOLUME * phase.sin();
-            phase = phase + TAU * frequency / SAMPLE_RATE as f32;
-            phase = phase.rem_euclid(TAU);
+            phase += consts::TAU * frequency / SAMPLE_RATE as f32;
+            phase = phase.rem_euclid(consts::TAU);
         }
     };
 

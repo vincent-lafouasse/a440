@@ -25,6 +25,27 @@ struct Settings {
     pub offset: i8,
 }
 
+impl Settings {
+    pub fn log(&self) {
+        println!("a4 = {} Hz", self.reference);
+        if self.offset != 0 {
+            println!("offset = {} semitones", self.offset);
+        }
+    }
+
+    pub fn verify(&self) -> Option<&str> {
+        if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&self.reference) {
+            return Some("Frequency out of bounds");
+        }
+
+        if !(MIN_OFFSET..=MAX_OFFSET).contains(&self.offset) {
+            return Some("Offset out of bounds");
+        }
+
+        None
+    }
+}
+
 fn main() {
     let host: cpal::Host = cpal::default_host();
     let device: cpal::Device = host
@@ -38,9 +59,9 @@ fn main() {
     };
 
     let settings = Settings::parse();
-    log_settings(&settings);
+    settings.log();
 
-    if let Some(err_msg) = verify_settings(&settings) {
+    if let Some(err_msg) = settings.verify() {
         eprintln!("\n{}", err_msg);
         eprintln!("For more information, try '--help'");
         return;
@@ -81,23 +102,4 @@ fn main() {
             return;
         }
     }
-}
-
-fn log_settings(settings: &Settings) {
-    println!("a4 = {} Hz", settings.reference);
-    if settings.offset != 0 {
-        println!("offset = {} semitones", settings.offset);
-    }
-}
-
-fn verify_settings(settings: &Settings) -> Option<&str> {
-    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&settings.reference) {
-        return Some("Frequency out of bounds");
-    }
-
-    if !(MIN_OFFSET..=MAX_OFFSET).contains(&settings.offset) {
-        return Some("Offset out of bounds");
-    }
-
-    None
 }

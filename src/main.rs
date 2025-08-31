@@ -34,14 +34,11 @@ fn main() {
         buffer_size: cpal::BufferSize::Default,
     };
 
-    let args = Settings::parse();
+    let settings = Settings::parse();
+    log_settings(&settings);
 
-    let frequency = args.frequency;
-    let offset = args.offset;
-    println!("a4 = {} Hz", frequency);
-    if offset != 0 {
-        println!("offset = {} semitones", offset);
-    }
+    let frequency = settings.frequency;
+    let offset = settings.offset;
 
     if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&frequency) {
         eprintln!("Frequency out of bounds");
@@ -77,5 +74,12 @@ fn main() {
         if input == "\n" {
             return;
         }
+    }
+}
+
+fn log_settings(settings: &Settings) {
+    println!("a4 = {} Hz", settings.frequency);
+    if settings.offset != 0 {
+        println!("offset = {} semitones", settings.offset);
     }
 }

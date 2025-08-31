@@ -21,7 +21,7 @@ struct Settings {
     pub reference: f32,
 
     /// Offset in semitones, must be within [-12, 12] semitones
-    #[arg(short, long, default_value_t = 0)]
+    #[arg(allow_hyphen_values = true, short, long, default_value_t = 0)]
     pub offset: i8,
 }
 

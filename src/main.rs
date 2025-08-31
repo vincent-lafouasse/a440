@@ -13,7 +13,7 @@ const MAX_FREQUENCY: f32 = 1000.0;
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Settings {
-    /// Frequency of A4 in Hertz
+    /// Frequency of A4 in Hertz, must be within [20, 1000] Hz
     #[arg(short, long, default_value_t = 440.0f32)]
     pub frequency: f32,
 
@@ -43,8 +43,8 @@ fn main() {
         println!("offset = {} semitones", offset);
     }
 
-    if frequency <= MIN_FREQUENCY || frequency > MAX_FREQUENCY {
-        eprintln!("Nope, not doing this");
+    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&frequency) {
+        eprintln!("Frequency out of bounds");
         return;
     }
 

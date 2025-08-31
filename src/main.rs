@@ -9,6 +9,9 @@ const VOLUME: f32 = 0.7;
 const MIN_FREQUENCY: f32 = 20.0;
 const MAX_FREQUENCY: f32 = 1000.0;
 
+const MIN_OFFSET: i8 = -12;
+const MAX_OFFSET: i8 = 12;
+
 /// Tune your damn instruments
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
@@ -17,7 +20,7 @@ struct Settings {
     #[arg(short, long, default_value_t = 440.0f32)]
     pub reference: f32,
 
-    /// Offset in semitones
+    /// Offset in semitones, must be within [-12, 12] semitones
     #[arg(short, long, default_value_t = 0)]
     pub offset: i8,
 }
@@ -37,13 +40,14 @@ fn main() {
     let settings = Settings::parse();
     log_settings(&settings);
 
-    let reference = settings.reference;
-    let offset = settings.offset;
-
-    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&reference) {
-        eprintln!("Frequency out of bounds");
+    if let Some(err_msg) = verify_settings(&settings) {
+        eprintln!("\n{}", err_msg);
+        eprintln!("For more information, try '--help'");
         return;
     }
+
+    let reference = settings.reference;
+    let offset = settings.offset;
 
     let frequency = reference;
 
@@ -84,4 +88,16 @@ fn log_settings(settings: &Settings) {
     if settings.offset != 0 {
         println!("offset = {} semitones", settings.offset);
     }
+}
+
+fn verify_settings(settings: &Settings) -> Option<&str> {
+    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&settings.reference) {
+        return Some("Frequency out of bounds");
+    }
+
+    if !(MIN_OFFSET..=MAX_OFFSET).contains(&settings.offset) {
+        return Some("Offset out of bounds");
+    }
+
+    None
 }

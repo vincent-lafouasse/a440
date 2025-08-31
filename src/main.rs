@@ -61,6 +61,13 @@ fn main() {
     stream.play().unwrap();
 
     loop {
-        std::thread::sleep(std::time::Duration::from_secs(1));
+        let mut input = String::new();
+        std::io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        if input == "\n" {
+            return;
+        }
     }
 }

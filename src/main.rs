@@ -6,6 +6,9 @@ use std::f32::consts::TAU;
 const SAMPLE_RATE: u32 = 48000;
 const VOLUME: f32 = 0.7;
 
+const MIN_FREQUENCY: f32 = 20.0;
+const MAX_FREQUENCY: f32 = 1000.0;
+
 /// Tune your damn instruments
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
@@ -16,11 +19,6 @@ struct Settings {
 }
 
 fn main() {
-    let args = Settings::parse();
-
-    let frequency = args.frequency;
-    println!("a4 = {} Hz", frequency);
-
     let host: cpal::Host = cpal::default_host();
     let device: cpal::Device = host
         .default_output_device()
@@ -31,6 +29,16 @@ fn main() {
         sample_rate: cpal::SampleRate(SAMPLE_RATE),
         buffer_size: cpal::BufferSize::Default,
     };
+
+    let args = Settings::parse();
+
+    let frequency = args.frequency;
+    println!("a4 = {} Hz", frequency);
+
+    if frequency <= MIN_FREQUENCY || frequency > MAX_FREQUENCY {
+        eprintln!("Nope, not doing this");
+        return;
+    }
 
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {

@@ -15,7 +15,7 @@ const MAX_FREQUENCY: f32 = 1000.0;
 struct Settings {
     /// Frequency of A4 in Hertz, must be within [20, 1000] Hz
     #[arg(short, long, default_value_t = 440.0f32)]
-    pub frequency: f32,
+    pub reference: f32,
 
     /// Offset in semitones
     #[arg(short, long, default_value_t = 0)]
@@ -37,13 +37,15 @@ fn main() {
     let settings = Settings::parse();
     log_settings(&settings);
 
-    let frequency = settings.frequency;
+    let reference = settings.reference;
     let offset = settings.offset;
 
-    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&frequency) {
+    if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&reference) {
         eprintln!("Frequency out of bounds");
         return;
     }
+
+    let frequency = reference;
 
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
@@ -78,7 +80,7 @@ fn main() {
 }
 
 fn log_settings(settings: &Settings) {
-    println!("a4 = {} Hz", settings.frequency);
+    println!("a4 = {} Hz", settings.reference);
     if settings.offset != 0 {
         println!("offset = {} semitones", settings.offset);
     }

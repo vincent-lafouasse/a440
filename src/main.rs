@@ -16,6 +16,10 @@ struct Settings {
     /// Frequency of A4 in Hertz
     #[arg(short, long, default_value_t = 440.0f32)]
     pub frequency: f32,
+
+    /// Offset in semitones
+    #[arg(short, long, default_value_t = 0)]
+    pub offset: i8,
 }
 
 fn main() {
@@ -33,7 +37,11 @@ fn main() {
     let args = Settings::parse();
 
     let frequency = args.frequency;
+    let offset = args.offset;
     println!("a4 = {} Hz", frequency);
+    if offset != 0 {
+        println!("offset = {} semitones", offset);
+    }
 
     if frequency <= MIN_FREQUENCY || frequency > MAX_FREQUENCY {
         eprintln!("Nope, not doing this");

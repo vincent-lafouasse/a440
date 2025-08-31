@@ -9,13 +9,41 @@ const VOLUME: f32 = 0.7;
 const MIN_FREQUENCY: f32 = 20.0;
 const MAX_FREQUENCY: f32 = 1000.0;
 
+const MIN_OFFSET: i8 = -12;
+const MAX_OFFSET: i8 = 12;
+
 /// Tune your damn instruments
 #[derive(Parser, Debug)]
 #[command(about, long_about = None)]
 struct Settings {
-    /// Frequency of A4 in Hertz
+    /// Frequency of A4 in Hertz, must be within [20, 1000] Hz
     #[arg(short, long, default_value_t = 440.0f32)]
-    pub frequency: f32,
+    pub reference: f32,
+
+    /// Offset in semitones, must be within [-12, 12] semitones
+    #[arg(allow_hyphen_values = true, short, long, default_value_t = 0)]
+    pub offset: i8,
+}
+
+impl Settings {
+    pub fn log(&self) {
+        println!("a4 = {} Hz", self.reference);
+        if self.offset != 0 {
+            println!("offset = {} semitones", self.offset);
+        }
+    }
+
+    pub fn verify(&self) -> Option<&str> {
+        if !(MIN_FREQUENCY..=MAX_FREQUENCY).contains(&self.reference) {
+            return Some("Frequency out of bounds");
+        }
+
+        if !(MIN_OFFSET..=MAX_OFFSET).contains(&self.offset) {
+            return Some("Offset out of bounds");
+        }
+
+        None
+    }
 }
 
 fn main() {
@@ -30,15 +58,19 @@ fn main() {
         buffer_size: cpal::BufferSize::Default,
     };
 
-    let args = Settings::parse();
+    let settings = Settings::parse();
+    settings.log();
 
-    let frequency = args.frequency;
-    println!("a4 = {} Hz", frequency);
-
-    if frequency <= MIN_FREQUENCY || frequency > MAX_FREQUENCY {
-        eprintln!("Nope, not doing this");
+    if let Some(err_msg) = settings.verify() {
+        eprintln!("\n{}", err_msg);
+        eprintln!("For more information, try '--help'");
         return;
     }
+
+    let reference = settings.reference;
+    let offset = settings.offset as f32;
+
+    let frequency = reference * 2.0f32.powf(offset / 12.0);
 
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {

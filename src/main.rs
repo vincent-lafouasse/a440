@@ -47,9 +47,9 @@ fn main() {
     }
 
     let reference = settings.reference;
-    let offset = settings.offset;
+    let offset = settings.offset as f32;
 
-    let frequency = reference;
+    let frequency = reference * 2.0f32.powf(offset / 12.0);
 
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {

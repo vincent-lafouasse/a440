@@ -46,17 +46,18 @@ impl Settings {
 }
 
 fn main() {
+    // init cpal objects
     let host: cpal::Host = cpal::default_host();
     let device: cpal::Device = host
         .default_output_device()
         .expect("no output device available");
-
     let config = cpal::StreamConfig {
         channels: 1,
         sample_rate: cpal::SampleRate(SAMPLE_RATE),
         buffer_size: cpal::BufferSize::Default,
     };
 
+    // parse, log and verify settings (from argv)
     let settings = Settings::parse();
     settings.log();
 
@@ -66,11 +67,13 @@ fn main() {
         return;
     }
 
+    // calculate 12-TET pitch
     let reference = settings.reference;
     let offset = settings.offset as f32;
 
     let frequency = reference * 2.0f32.powf(offset / 12.0);
 
+    // audio callback
     let mut phase: f32 = 0.0;
     let audio_fn = move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
         for sample in data.iter_mut() {
@@ -91,6 +94,7 @@ fn main() {
 
     stream.play().unwrap();
 
+    // kill on empty line in stdin
     loop {
         let mut input = String::new();
         std::io::stdin()

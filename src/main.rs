@@ -1,6 +1,5 @@
 use clap::Parser;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use cpal::StreamConfig;
 use std::f32::consts;
 
 const SAMPLE_RATE: u32 = 48000;
@@ -13,7 +12,7 @@ const MIN_OFFSET: i8 = -12;
 const MAX_OFFSET: i8 = 12;
 
 /// Tune your damn instruments
-#[derive(Parser, Debug)]
+#[derive(clap::Parser, Debug)]
 #[command(about, long_about = None)]
 struct Settings {
     /// Frequency of A4 in Hertz, must be within [20, 1000] Hz
@@ -52,7 +51,7 @@ fn main() {
         .default_output_device()
         .expect("no output device available");
 
-    let config = StreamConfig {
+    let config = cpal::StreamConfig {
         channels: 1,
         sample_rate: cpal::SampleRate(SAMPLE_RATE),
         buffer_size: cpal::BufferSize::Default,

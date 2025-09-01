@@ -10,7 +10,7 @@ cargo [build|run]
 
 ## Usage
 
-```sh
+```
 ❯ a440 --help
 Tune your damn instruments
 
